@@ -18,21 +18,24 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Create Hardcore Signing Properties
+      - name: Link System Debug Keystore
         run: |
-          touch test.jks
-          # Запихиваем вообще все возможные названия переменных подписи
-          echo "KEYSTORE_PATH=../test.jks" > signing.properties
-          echo "storeFile=../test.jks" >> signing.properties
+          # Генерируем дефолтный дебаг-ключ, если его еще нет в системе
+          mkdir -p ~/.android
+          keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           
-          echo "KEYSTORE_PASSWORD=password123" >> signing.properties
-          echo "storePassword=password123" >> signing.properties
+          # Прописываем путь к НАСТОЯЩЕМУ системному дебаг-ключу и его стандартные пароли
+          echo "KEYSTORE_PATH=/home/runner/.android/debug.keystore" > signing.properties
+          echo "storeFile=/home/runner/.android/debug.keystore" >> signing.properties
           
-          echo "KEY_ALIAS=alias123" >> signing.properties
-          echo "keyAlias=alias123" >> signing.properties
+          echo "KEYSTORE_PASSWORD=android" >> signing.properties
+          echo "storePassword=android" >> signing.properties
           
-          echo "KEY_PASSWORD=password123" >> signing.properties
-          echo "keyPassword=password123" >> signing.properties
+          echo "KEY_ALIAS=androiddebugkey" >> signing.properties
+          echo "keyAlias=androiddebugkey" >> signing.properties
+          
+          echo "KEY_PASSWORD=android" >> signing.properties
+          echo "keyPassword=android" >> signing.properties
 
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
