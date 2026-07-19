@@ -18,6 +18,10 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Create Dummy Signing Properties
+        run: |
+          cp signing.properties.example signing.properties
+
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
