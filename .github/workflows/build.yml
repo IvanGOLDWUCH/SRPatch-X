@@ -1,7 +1,7 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # Позволяет запускать сборку вручную
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,16 +18,21 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Create Valid Signing Properties
+      - name: Create Hardcore Signing Properties
         run: |
-          # Создаем фейковый файл хранилища ключей, чтобы Gradle не ругался на пустой путь
-          touch debug.keystore
+          touch test.jks
+          # Запихиваем вообще все возможные названия переменных подписи
+          echo "KEYSTORE_PATH=../test.jks" > signing.properties
+          echo "storeFile=../test.jks" >> signing.properties
           
-          # Заполняем signing.properties временными данными для успешной компиляции
-          echo "KEYSTORE_PATH=../debug.keystore" > signing.properties
-          echo "KEYSTORE_PASSWORD=android" >> signing.properties
-          echo "KEY_ALIAS=androiddebugkey" >> signing.properties
-          echo "KEY_PASSWORD=android" >> signing.properties
+          echo "KEYSTORE_PASSWORD=password123" >> signing.properties
+          echo "storePassword=password123" >> signing.properties
+          
+          echo "KEY_ALIAS=alias123" >> signing.properties
+          echo "keyAlias=alias123" >> signing.properties
+          
+          echo "KEY_PASSWORD=password123" >> signing.properties
+          echo "keyPassword=password123" >> signing.properties
 
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
