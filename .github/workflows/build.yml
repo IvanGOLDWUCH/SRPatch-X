@@ -18,9 +18,16 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Create Dummy Signing Properties
+      - name: Create Valid Signing Properties
         run: |
-          cp signing.properties.example signing.properties
+          # Создаем фейковый файл хранилища ключей, чтобы Gradle не ругался на пустой путь
+          touch debug.keystore
+          
+          # Заполняем signing.properties временными данными для успешной компиляции
+          echo "KEYSTORE_PATH=../debug.keystore" > signing.properties
+          echo "KEYSTORE_PASSWORD=android" >> signing.properties
+          echo "KEY_ALIAS=androiddebugkey" >> signing.properties
+          echo "KEY_PASSWORD=android" >> signing.properties
 
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
